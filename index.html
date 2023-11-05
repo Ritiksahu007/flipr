@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nobel Prize Information</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .prize {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .laureate {
+            margin-top: 10px;
+            padding-left: 20px;
+            border-left: 2px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Nobel Prize Information</h1>
+    <div id="prizesContainer"></div>
+
+    <script>
+        function displayPrizes() {
+            const prizesContainer = document.getElementById("prizesContainer");
+
+            fetch('http://127.0.0.1:5000/prizes')  // Adjust the URL if Flask runs on a different address
+                .then(response => response.json())
+                .then(data => {
+                    const prizeData = data.prizes;
+
+                    prizeData.forEach(prize => {
+                        const prizeElement = document.createElement("div");
+                        prizeElement.classList.add("prize");
+
+                        const yearElement = document.createElement("p");
+                        yearElement.textContent = `Year: ${prize.year}`;
+
+                        const categoryElement = document.createElement("p");
+                        categoryElement.textContent = `Category: ${prize.category}`;
+
+                        const motivationElement = document.createElement("p");
+                        motivationElement.textContent = `Motivation: ${prize.motivation}`;
+
+                        const laureatesElement = document.createElement("div");
+                        laureatesElement.classList.add("laureate");
+                        laureatesElement.innerHTML = "<strong>Laureates:</strong>";
+
+                        prize.laureates.forEach(laureate => {
+                            const laureateInfo = document.createElement("p");
+                            laureateInfo.textContent = `ID: ${laureate.id}, Name: ${laureate.firstName} ${laureate.surName}`;
+                            laureatesElement.appendChild(laureateInfo);
+                        });
+
+                        prizeElement.appendChild(yearElement);
+                        prizeElement.appendChild(categoryElement);
+                        prizeElement.appendChild(motivationElement);
+                        prizeElement.appendChild(laureatesElement);
+
+                        prizesContainer.appendChild(prizeElement);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Display the prize information when the page loads
+        document.addEventListener("DOMContentLoaded", displayPrizes);
+    </script>
+</body>
+
+</html>
